@@ -11,6 +11,7 @@
 		F1ACDAB8288BF96A00A73261 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACDAB7288BF96A00A73261 /* ContentView.swift */; };
 		F1ACDABA288BF96C00A73261 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1ACDAB9288BF96C00A73261 /* Assets.xcassets */; };
 		F1ACDABD288BF96C00A73261 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1ACDABC288BF96C00A73261 /* Preview Assets.xcassets */; };
+		F1ACDAC4288CB08300A73261 /* ScrollViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ACDAC3288CB08300A73261 /* ScrollViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,7 @@
 		F1ACDAB7288BF96A00A73261 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F1ACDAB9288BF96C00A73261 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F1ACDABC288BF96C00A73261 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F1ACDAC3288CB08300A73261 /* ScrollViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 				F1ACDAB7288BF96A00A73261 /* ContentView.swift */,
 				F1ACDAB9288BF96C00A73261 /* Assets.xcassets */,
 				F1ACDABB288BF96C00A73261 /* Preview Content */,
+				F1ACDAC3288CB08300A73261 /* ScrollViewModel.swift */,
 			);
 			path = ScrollRerationToolbar;
 			sourceTree = "<group>";
@@ -137,6 +140,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1ACDAC4288CB08300A73261 /* ScrollViewModel.swift in Sources */,
 				F1ACDAB8288BF96A00A73261 /* ContentView.swift in Sources */,
 				F1ACDAB6288BF96A00A73261 /* ScrollRerationToolbarApp.swift in Sources */,
 			);
@@ -195,7 +199,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -249,7 +253,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
