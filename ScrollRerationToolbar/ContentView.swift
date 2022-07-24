@@ -6,24 +6,29 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ContentView: View {
 
     @ObservedObject var viewModel = ScrollViewModel()
-    @State private var offsetY = CGFloat(0)
+    @State private var count = CGFloat(0)
+
+    @State private var scollAmountHistroyCount: Int = 0
+    @State private var alertScrollAmount: Int = 50
+    @State var task: AnyCancellable? = nil
 
     struct ScrollAmountPreferenceKey: PreferenceKey {
 
         // 子から親に渡す値の型
-        typealias Value = [CGFloat]
+        typealias Value = CGFloat
 
         // PreferenceKeyは必ず実装
-        static var defaultValue: Value = [0]
+        static var defaultValue: Value = CGFloat.zero
 
         // PreferenceKeyは必ず実装
         // inout -> 参照　nextValue -> 親に渡す値
         static func reduce(value: inout Value, nextValue: () -> Value) {
-            value.append(contentsOf: nextValue())
+            value += nextValue()
         }
     }
 
@@ -43,26 +48,32 @@ struct ContentView: View {
         .ignoresSafeArea(edges: [.top, .bottom])
         .onPreferenceChange(ScrollAmountPreferenceKey.self) { value in
 
-            print(value)
 
-            if value[0] < 130 && value[0] >= 0{
-                return
+            viewModel.getScrollVector(value: value)
+
+        
+            self.scollAmountHistroyCount += 1
+
+            if self.scollAmountHistroyCount >= alertScrollAmount {
+
+                if value < 130 && value >= 0{
+                    return
+                }
+
+                if value >= 50 {
+                    self.viewModel.isShowBottomMenu = true
+                }
+
+                self.viewModel.offsetY = value
+
+                self.scollAmountHistroyCount = 0
             }
-
-            let prevDiff = self.offsetY - value[0]
-
-            if prevDiff > 0 {
-                self.viewModel.isShowBottomMenu = false
-            } else {
-                self.viewModel.isShowBottomMenu = true
-            }
-
-            if value[0] >= 50 {
-                self.viewModel.isShowBottomMenu = true
-            }
-
-            self.offsetY = value[0]
-
+        }
+        .onAppear {
+            self.task = self.viewModel.$currentVector.receive(on: DispatchQueue.main)
+                .sink { (value) in
+                    print(value ?? "nil")
+                }
         }
     }
 
@@ -73,7 +84,7 @@ struct ContentView: View {
             GeometryReader { geometry in
                 Color.clear
                     .preference(key: ScrollAmountPreferenceKey.self,
-                                value: [geometry.frame(in: .global).minY])
+                                value: geometry.frame(in: .global).minY)
             }
 
             list
@@ -81,9 +92,11 @@ struct ContentView: View {
     }
 
     var list: some View {
-        VStack {
+        VStack(spacing: 0) {
             ForEach(1..<100) {
                 Text("\($0) 行目").font(.title)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+                    .border(Color.black)
             }
         }
     }
