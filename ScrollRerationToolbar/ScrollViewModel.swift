@@ -12,38 +12,81 @@ class ScrollViewModel: ObservableObject {
 
     enum ScrollVector {
         case up, down
+        mutating func toggle() {
+            self = (self == .up) ? .down : .up
+        }
     }
     @Published public var prevScrollAmount: CGFloat? = nil
-    @Published public var isShowBottomMenu = false
-    @Published public var offsetY = CGFloat(0)
-    @Published public var currentVector: ScrollVector? = nil
+    @Published public var prev = CGFloat(0)
+    @Published public var diff = CGFloat(0)
+    @Published public var bottomSheetCount = Int.zero
+    @Published public var headerCount = Int.zero
 
-    @Published public var isSwitchScrollVector = false
+    @Published public var prevScrollVector: ScrollVector? = nil
+
+    let bottomSheetLimitThreshold = 20
+    let headerLimitThreshold = 60
+
     var bottomOpacity: Double {
-        return isShowBottomMenu ? 1 : 0
+        return self.bottomSheetCount ==  self.bottomSheetLimitThreshold ? 1 : 0
     }
 
-    public func getScrollVector(value: CGFloat) {
+    var headerOpacity: Double {
+        return self.headerCount == self.headerLimitThreshold ? 1 : 0
+    }
 
-        let prevDiff = self.offsetY - value
-
-        if currentVector == nil {
-            if prevDiff > 0 {
-                currentVector = .down
-            } else {
-                currentVector = .up
-            }
-            return 
-        }
-
-        if prevDiff > 0 {
-            if currentVector == .up {
-                currentVector = .down
-            }
+    private func isScorllUp(_ value: CGFloat) -> Bool {
+        let diff = self.prev - value
+        if diff > 0 {
+            return false
         } else {
-            if currentVector == .down {
-                currentVector = .up
-            }
+            return true
         }
+    }
+    public func scrollEventHandler(value: CGFloat) {
+
+        let currentScrollVector: ScrollVector = (self.prev - value) > 0 ? .down : .up
+
+        if currentScrollVector == .up {
+
+            if self.bottomSheetCount >= bottomSheetLimitThreshold {
+                self.bottomSheetCount = bottomSheetLimitThreshold
+            } else {
+                self.bottomSheetCount += 1
+            }
+
+            if self.headerCount >= headerLimitThreshold {
+                self.headerCount = headerLimitThreshold
+            } else {
+                self.headerCount += 1
+            }
+
+
+
+        } else {
+            self.headerCount = 0
+            self.bottomSheetCount = 0
+        }
+
+        self.prev = value
+
+        if prevScrollVector == nil {
+            if currentScrollVector == .up   {
+                prevScrollVector = .down
+            } else {
+                prevScrollVector = .up
+            }
+            return
+        }
+
+        if prevScrollVector != currentScrollVector {
+            isSwitchVector()
+        }
+    }
+
+    private func isSwitchVector() {
+        self.bottomSheetCount = 0
+        self.headerCount = 0
+        self.prevScrollVector?.toggle()
     }
 }

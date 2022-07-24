@@ -10,13 +10,10 @@ import Combine
 
 struct ContentView: View {
 
-    @ObservedObject var viewModel = ScrollViewModel()
+    @StateObject var viewModel = ScrollViewModel()
     @State private var count = CGFloat(0)
-
     @State private var scollAmountHistroyCount: Int = 0
-    @State private var alertScrollAmount: Int = 50
     @State var task: AnyCancellable? = nil
-
     struct ScrollAmountPreferenceKey: PreferenceKey {
 
         // 子から親に渡す値の型
@@ -44,35 +41,39 @@ struct ContentView: View {
                 bottom
             }
         }
-        .background(Color.red)
         .ignoresSafeArea(edges: [.top, .bottom])
         .onPreferenceChange(ScrollAmountPreferenceKey.self) { value in
+            viewModel.scrollEventHandler(value: value)
 
-
-            viewModel.getScrollVector(value: value)
-
-        
-            self.scollAmountHistroyCount += 1
-
-            if self.scollAmountHistroyCount >= alertScrollAmount {
-
-                if value < 130 && value >= 0{
-                    return
-                }
-
-                if value >= 50 {
-                    self.viewModel.isShowBottomMenu = true
-                }
-
-                self.viewModel.offsetY = value
-
-                self.scollAmountHistroyCount = 0
-            }
+//
+//            self.scollAmountHistroyCount += 1
+//
+//            if self.scollAmountHistroyCount >= alertScrollAmount {
+//
+//                if value < 130 && value >= 0{
+//                    return
+//                }
+//
+//                if value >= 50 {
+//                    self.viewModel.isShowBottomMenu = true
+//                }
+//
+//                self.viewModel.offsetY = value
+//
+//                self.scollAmountHistroyCount = 0
+//            }
         }
         .onAppear {
-            self.task = self.viewModel.$currentVector.receive(on: DispatchQueue.main)
+            self.task = self.viewModel.$prevScrollVector.receive(on: DispatchQueue.main)
                 .sink { (value) in
-                    print(value ?? "nil")
+                    switch value {
+                    case .down:
+                        print("↓に切り替わる")
+                    case .up:
+                        print("上に切り替わる")
+                    case .none:
+                        print("開始")
+                    }
                 }
         }
     }
@@ -106,7 +107,7 @@ struct ContentView: View {
             Color.black
         }
         .frame(height: 100)
-        .opacity(self.viewModel.bottomOpacity)
+        .opacity(self.viewModel.headerCount == viewModel.headerLimitThreshold ? 1 : 0)
     }
 
     var bottom: some View {
