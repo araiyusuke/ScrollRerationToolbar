@@ -32,36 +32,20 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .top ){
 
-            header.zIndex(.infinity)
+            header
 
             ZStack(alignment: .bottom) {
                 ScrollView() {
                     scrollContents
                 }
                 bottom
+                    .offset(y: viewModel.bottomOpacity == 1 ? -0 : 100)
+                    .animation(.default, value: viewModel.bottomOpacity)
             }
         }
         .ignoresSafeArea(edges: [.top, .bottom])
         .onPreferenceChange(ScrollAmountPreferenceKey.self) { value in
             viewModel.scrollEventHandler(value: value)
-
-//
-//            self.scollAmountHistroyCount += 1
-//
-//            if self.scollAmountHistroyCount >= alertScrollAmount {
-//
-//                if value < 130 && value >= 0{
-//                    return
-//                }
-//
-//                if value >= 50 {
-//                    self.viewModel.isShowBottomMenu = true
-//                }
-//
-//                self.viewModel.offsetY = value
-//
-//                self.scollAmountHistroyCount = 0
-//            }
         }
         .onAppear {
             self.task = self.viewModel.$prevScrollVector.receive(on: DispatchQueue.main)
@@ -103,11 +87,18 @@ struct ContentView: View {
     }
 
     var header: some View {
-        ZStack {
-            Color.black
+        VStack {
+            Text("メールを検索")
+                .foregroundColor(.red)
+                .frame(maxWidth: .infinity, maxHeight: 30)
+                .padding()
+                .background(Color.black)
         }
-        .frame(height: 100)
-        .opacity(self.viewModel.headerCount == viewModel.headerLimitThreshold ? 1 : 0)
+        .frame(maxWidth: .infinity, maxHeight: 100)
+        .cornerRadius(4)
+        .offset(y: viewModel.headerOpacity == 1 ? 0 : -100)
+        .animation(.default, value: viewModel.headerOpacity)
+
     }
 
     var bottom: some View {
@@ -115,7 +106,7 @@ struct ContentView: View {
             Color.black
         }
         .frame(height: 100)
-        .opacity(self.viewModel.bottomOpacity)
+//        .opacity(self.viewModel.bottomOpacity)
     }
 }
 
