@@ -10,7 +10,7 @@ import SwiftUI
 
 class ScrollViewModel: ObservableObject {
 
-    enum ScrollVector {
+    enum ScrollOrientation {
         case up, down
         mutating func toggle() {
             self = (self == .up) ? .down : .up
@@ -21,18 +21,19 @@ class ScrollViewModel: ObservableObject {
     @Published public var diff = CGFloat(0)
     @Published public var bottomSheetCount = Int.zero
     @Published public var headerCount = Int.zero
+    @Published public var isFirstPosition = false
 
-    @Published public var prevScrollVector: ScrollVector? = nil
+    @Published public var prevScrollOrientation: ScrollOrientation? = nil
 
     let bottomSheetLimitThreshold = 20
-    let headerLimitThreshold = 60
+    let headerLimitThreshold = 40
 
-    var bottomOpacity: Double {
-        return self.bottomSheetCount ==  self.bottomSheetLimitThreshold ? 1 : 0
+    var isShowBottomSheet: Bool {
+        return self.bottomSheetCount == self.bottomSheetLimitThreshold || isFirstPosition
     }
 
-    var headerOpacity: Double {
-        return self.headerCount == self.headerLimitThreshold ? 1 : 0
+    var isShowHeader: Bool {
+        return self.headerCount == self.headerLimitThreshold || isFirstPosition
     }
 
     private func isScorllUp(_ value: CGFloat) -> Bool {
@@ -45,7 +46,14 @@ class ScrollViewModel: ObservableObject {
     }
     public func scrollEventHandler(value: CGFloat) {
 
-        let currentScrollVector: ScrollVector = (self.prev - value) > 0 ? .down : .up
+        print(value)
+        if value == 100 {
+            isFirstPosition = true
+        } else {
+            isFirstPosition = false
+        }
+
+        let currentScrollVector: ScrollOrientation = (self.prev - value) > 0 ? .down : .up
 
         if currentScrollVector == .up {
 
@@ -61,8 +69,6 @@ class ScrollViewModel: ObservableObject {
                 self.headerCount += 1
             }
 
-
-
         } else {
             self.headerCount = 0
             self.bottomSheetCount = 0
@@ -70,16 +76,16 @@ class ScrollViewModel: ObservableObject {
 
         self.prev = value
 
-        if prevScrollVector == nil {
+        if prevScrollOrientation == nil {
             if currentScrollVector == .up   {
-                prevScrollVector = .down
+                prevScrollOrientation = .down
             } else {
-                prevScrollVector = .up
+                prevScrollOrientation = .up
             }
             return
         }
 
-        if prevScrollVector != currentScrollVector {
+        if prevScrollOrientation != currentScrollVector {
             isSwitchVector()
         }
     }
@@ -87,6 +93,6 @@ class ScrollViewModel: ObservableObject {
     private func isSwitchVector() {
         self.bottomSheetCount = 0
         self.headerCount = 0
-        self.prevScrollVector?.toggle()
+        self.prevScrollOrientation?.toggle()
     }
 }

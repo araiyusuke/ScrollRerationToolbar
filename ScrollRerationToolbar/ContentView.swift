@@ -30,25 +30,28 @@ struct ContentView: View {
     }
 
     var body: some View {
+
         ZStack(alignment: .top ){
 
             header
-
+                .zIndex(.infinity)
+            
             ZStack(alignment: .bottom) {
                 ScrollView() {
                     scrollContents
+                        .padding(.top, 50)
                 }
                 bottom
-                    .offset(y: viewModel.bottomOpacity == 1 ? -0 : 100)
-                    .animation(.default, value: viewModel.bottomOpacity)
+                    .offset(y: viewModel.isShowBottomSheet ? 0 : 100)
+                    .animation(.default, value: viewModel.isShowBottomSheet)
             }
         }
-        .ignoresSafeArea(edges: [.top, .bottom])
+        .ignoresSafeArea(edges: [.bottom])
         .onPreferenceChange(ScrollAmountPreferenceKey.self) { value in
             viewModel.scrollEventHandler(value: value)
         }
         .onAppear {
-            self.task = self.viewModel.$prevScrollVector.receive(on: DispatchQueue.main)
+            self.task = self.viewModel.$prevScrollOrientation.receive(on: DispatchQueue.main)
                 .sink { (value) in
                     switch value {
                     case .down:
@@ -81,32 +84,43 @@ struct ContentView: View {
             ForEach(1..<100) {
                 Text("\($0) 行目").font(.title)
                     .frame(maxWidth: .infinity, maxHeight: 50)
-                    .border(Color.black)
             }
         }
     }
 
     var header: some View {
-        VStack {
-            Text("メールを検索")
-                .foregroundColor(.red)
-                .frame(maxWidth: .infinity, maxHeight: 30)
-                .padding()
-                .background(Color.black)
-        }
-        .frame(maxWidth: .infinity, maxHeight: 100)
-        .cornerRadius(4)
-        .offset(y: viewModel.headerOpacity == 1 ? 0 : -100)
-        .animation(.default, value: viewModel.headerOpacity)
 
+        Text("メールを検索")
+            .foregroundColor(Color.gray)
+            .frame(maxWidth: .infinity, maxHeight: 50)
+            .background(Color.white)
+            .cornerRadius(5)
+            .shadow(radius: 2)
+            .padding(.horizontal, 10)
+            .offset(y: viewModel.isFirstPosition || viewModel.isShowHeader ? 0 : -100)
+            .animation(.default, value: viewModel.isShowHeader)
     }
 
     var bottom: some View {
         ZStack {
-            Color.black
+            Color.white
+            HStack {
+                Image(systemName: "pencil")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30)
+                    .frame(maxWidth: .infinity)
+
+                Image(systemName: "camera")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30)
+                    .frame(maxWidth: .infinity)
+            }
+            .padding()
         }
         .frame(height: 100)
-//        .opacity(self.viewModel.bottomOpacity)
+        .shadow(radius: 2)
     }
 }
 
