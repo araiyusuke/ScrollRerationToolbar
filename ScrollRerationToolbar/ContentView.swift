@@ -43,13 +43,33 @@ struct ContentView: View {
                         scrollContents
                             .padding(.top, viewModel.topScrollSpace)
                     }
-                    bottom
-                        .offset(y: viewModel.isShowBottomSheet ? 0 : 100)
-                        .animation(.default, value: viewModel.isShowBottomSheet)
+                    VStack {
+                        ZStack {
+
+                        Circle()
+                            .foregroundColor(Color.white)
+                            .frame(width: 60, height: 60)
+                            .shadow(radius: 2)
+
+
+                            Image(systemName: "pencil")
+                                .resizable()
+                                .foregroundColor(Color.red)
+                                .frame(width: 30, height: 30)
+                                .frame(width: 60, height: 60)
+
+                        }
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .padding([.bottom, .trailing], 30)
+
+
+                        bottom
+                    }
+                    .offset(y: viewModel.isShowBottomSheet ? 0 : 100)
+                    .animation(.default, value: viewModel.isShowBottomSheet)
                 }
             }.onAppear() {
                 viewModel.safeAreaTop = geometry.safeAreaInsets.top
-                print(" safearea  \(viewModel.safeAreaTop)")
             }
         }
         .ignoresSafeArea(edges: [.bottom])

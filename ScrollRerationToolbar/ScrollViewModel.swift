@@ -23,6 +23,7 @@ class ScrollViewModel: ObservableObject {
     @Published public var diff = CGFloat(0)
     @Published public var bottomSheetCount = Int.zero
     @Published public var headerCount = Int.zero
+//    @Published public var isShowHeader = false
     @Published public var isFirstPosition = true
     @Published public var prevScrollOrientation: ScrollOrientation? = nil
 
@@ -51,7 +52,9 @@ class ScrollViewModel: ObservableObject {
 
         print(safeAreaTop + topScrollSpace)
         if value == safeAreaTop + topScrollSpace {
-            isFirstPosition = true
+            if isShowHeader == false {
+                isFirstPosition = true
+            }
         } else {
             isFirstPosition = false
         }
