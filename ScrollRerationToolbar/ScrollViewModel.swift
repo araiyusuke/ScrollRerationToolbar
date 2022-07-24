@@ -16,12 +16,9 @@ class ScrollViewModel: ObservableObject {
             self = (self == .up) ? .down : .up
         }
     }
-    @Published public var prevScrollAmount: CGFloat? = nil
     @Published public var prevValue = CGFloat(0)
-    @Published public var currentValue = CGFloat(0)
     @Published public var safeAreaTop: CGFloat? = nil
     @Published public var topScrollSpace = CGFloat(50)
-    @Published public var diff = CGFloat(0)
     @Published public var bottomSheetCount = Int.zero
     @Published public var headerCount = Int.zero
     @Published public var isStartPosition = true
@@ -40,13 +37,15 @@ class ScrollViewModel: ObservableObject {
 
     var startPosition: CGFloat? {
         guard let safeAreaTop = self.safeAreaTop else { return nil}
-
         return safeAreaTop + topScrollSpace
     }
 
-
     // スクロールが↑ならUIを表示する。
     public func scrollEventHandler(value: CGFloat) {
+
+        print(value)
+        guard let startPosition = self.startPosition else { return}
+        if value > startPosition { return }
 
         //MARK: - 初期化
         // 現在のスクロール向きを取得する
@@ -73,8 +72,7 @@ class ScrollViewModel: ObservableObject {
 
         //MARK: - スタートポジションにいる
         if value == startPosition {
-            if isShowHeader == false {
-                print("スタートポジション")
+            if isShowHeader == false && isStartPosition == false {
                 isStartPosition = true
             }
             return
@@ -82,12 +80,7 @@ class ScrollViewModel: ObservableObject {
 
         //MARK: - ↓スクロール(非表示にするため値をリセット)
         if currentScrollOrientation == .down {
-
-            if value == startPosition {
-
-            } else {
-                isStartPosition = false
-            }
+            isStartPosition = false
             //リセット
             reset()
             return

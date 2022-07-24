@@ -114,7 +114,6 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
         }
-        
     }
 
     var header: some View {
