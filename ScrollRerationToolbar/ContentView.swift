@@ -43,6 +43,7 @@ struct ContentView: View {
                         scrollContents
                             .padding(.top, viewModel.topScrollSpace)
                     }
+                    
                     VStack {
                         ZStack {
 
@@ -81,11 +82,9 @@ struct ContentView: View {
                 .sink { (value) in
                     switch value {
                     case .down:
-                        print("↓に切り替わる")
+                        print("↓")
                     case .up:
-                        print("上に切り替わる")
-                    case .none:
-                        print("開始")
+                        print("↑")
                     }
                 }
         }
@@ -115,6 +114,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, maxHeight: 50)
             }
         }
+        
     }
 
     var header: some View {

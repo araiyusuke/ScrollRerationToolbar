@@ -23,15 +23,14 @@ class ScrollViewModel: ObservableObject {
     @Published public var diff = CGFloat(0)
     @Published public var bottomSheetCount = Int.zero
     @Published public var headerCount = Int.zero
-//    @Published public var isShowHeader = false
     @Published public var isFirstPosition = true
-    @Published public var prevScrollOrientation: ScrollOrientation? = nil
+    @Published public var prevScrollOrientation: ScrollOrientation = .down
 
     let bottomSheetLimitThreshold = 20
     let headerLimitThreshold = 40
 
     var isShowBottomSheet: Bool {
-        return self.bottomSheetCount == self.bottomSheetLimitThreshold || isFirstPosition
+        return (self.bottomSheetCount == self.bottomSheetLimitThreshold) || isFirstPosition
     }
 
     var isShowHeader: Bool {
@@ -50,7 +49,6 @@ class ScrollViewModel: ObservableObject {
 
         guard let safeAreaTop = self.safeAreaTop else { return }
 
-        print(safeAreaTop + topScrollSpace)
         if value == safeAreaTop + topScrollSpace {
             if isShowHeader == false {
                 isFirstPosition = true
@@ -59,9 +57,11 @@ class ScrollViewModel: ObservableObject {
             isFirstPosition = false
         }
 
-        let currentScrollVector: ScrollOrientation = (self.prev - value) > 0 ? .down : .up
+        let currentScrollOrientation: ScrollOrientation = (self.prev - value) > 0 ? .down : .up
+        self.prev = value
 
-        if currentScrollVector == .up {
+        // ↑スクロール時
+        if currentScrollOrientation == .up {
 
             if self.bottomSheetCount >= bottomSheetLimitThreshold {
                 self.bottomSheetCount = bottomSheetLimitThreshold
@@ -75,30 +75,27 @@ class ScrollViewModel: ObservableObject {
                 self.headerCount += 1
             }
 
-        } else {
-            self.headerCount = 0
-            self.bottomSheetCount = 0
         }
 
-        self.prev = value
-
-        if prevScrollOrientation == nil {
-            if currentScrollVector == .up   {
-                prevScrollOrientation = .down
-            } else {
-                prevScrollOrientation = .up
-            }
-            return
+        // 下スクロールはリセットする。
+        if currentScrollOrientation == .down {
+           countReset()
         }
-
-        if prevScrollOrientation != currentScrollVector {
-            isSwitchVector()
+        
+        // スクロールの向きが変更になった
+        if prevScrollOrientation != currentScrollOrientation {
+            switchOrientation()
         }
     }
 
-    private func isSwitchVector() {
+    private func countReset() {
+        self.headerCount = 0
+        self.bottomSheetCount = 0
+    }
+
+    private func switchOrientation() {
         self.bottomSheetCount = 0
         self.headerCount = 0
-        self.prevScrollOrientation?.toggle()
+        self.prevScrollOrientation.toggle()
     }
 }
