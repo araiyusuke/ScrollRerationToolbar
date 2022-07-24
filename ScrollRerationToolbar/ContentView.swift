@@ -78,15 +78,15 @@ struct ContentView: View {
             viewModel.scrollEventHandler(value: value)
         }
         .onAppear {
-            self.task = self.viewModel.$prevScrollOrientation.receive(on: DispatchQueue.main)
-                .sink { (value) in
-                    switch value {
-                    case .down:
-                        print("↓")
-                    case .up:
-                        print("↑")
-                    }
-                }
+//            self.task = self.viewModel.$prevScrollOrientation.receive(on: DispatchQueue.main)
+//                .sink { (value) in
+//                    switch value {
+//                    case .down:
+//                        print("↓")
+//                    case .up:
+//                        print("↑")
+//                    }
+//                }
         }
     }
 
@@ -126,7 +126,7 @@ struct ContentView: View {
             .cornerRadius(5)
             .shadow(radius: 2)
             .padding(.horizontal, 10)
-            .offset(y: viewModel.isFirstPosition || viewModel.isShowHeader ? 0 : -100)
+            .offset(y: viewModel.isShowHeader ? 0 : -100)
             .animation(.default, value: viewModel.isShowHeader)
     }
 
