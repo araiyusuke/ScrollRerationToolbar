@@ -31,19 +31,25 @@ struct ContentView: View {
 
     var body: some View {
 
-        ZStack(alignment: .top ){
+        GeometryReader { geometry in
 
-            header
-                .zIndex(.infinity)
-            
-            ZStack(alignment: .bottom) {
-                ScrollView() {
-                    scrollContents
-                        .padding(.top, 50)
+            ZStack(alignment: .top ) {
+                
+                header
+                    .zIndex(.infinity)
+
+                ZStack(alignment: .bottom) {
+                    ScrollView() {
+                        scrollContents
+                            .padding(.top, viewModel.topScrollSpace)
+                    }
+                    bottom
+                        .offset(y: viewModel.isShowBottomSheet ? 0 : 100)
+                        .animation(.default, value: viewModel.isShowBottomSheet)
                 }
-                bottom
-                    .offset(y: viewModel.isShowBottomSheet ? 0 : 100)
-                    .animation(.default, value: viewModel.isShowBottomSheet)
+            }.onAppear() {
+                viewModel.safeAreaTop = geometry.safeAreaInsets.top
+                print(" safearea  \(viewModel.safeAreaTop)")
             }
         }
         .ignoresSafeArea(edges: [.bottom])
@@ -73,6 +79,9 @@ struct ContentView: View {
                 Color.clear
                     .preference(key: ScrollAmountPreferenceKey.self,
                                 value: geometry.frame(in: .global).minY)
+                    .onAppear {
+                        print(geometry.safeAreaInsets.top)
+                    }
             }
 
             list

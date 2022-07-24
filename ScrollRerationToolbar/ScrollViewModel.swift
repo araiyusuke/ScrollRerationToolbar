@@ -18,11 +18,12 @@ class ScrollViewModel: ObservableObject {
     }
     @Published public var prevScrollAmount: CGFloat? = nil
     @Published public var prev = CGFloat(0)
+    @Published public var safeAreaTop: CGFloat? = nil
+    @Published public var topScrollSpace = CGFloat(50)
     @Published public var diff = CGFloat(0)
     @Published public var bottomSheetCount = Int.zero
     @Published public var headerCount = Int.zero
-    @Published public var isFirstPosition = false
-
+    @Published public var isFirstPosition = true
     @Published public var prevScrollOrientation: ScrollOrientation? = nil
 
     let bottomSheetLimitThreshold = 20
@@ -46,8 +47,10 @@ class ScrollViewModel: ObservableObject {
     }
     public func scrollEventHandler(value: CGFloat) {
 
-        print(value)
-        if value == 100 {
+        guard let safeAreaTop = self.safeAreaTop else { return }
+
+        print(safeAreaTop + topScrollSpace)
+        if value == safeAreaTop + topScrollSpace {
             isFirstPosition = true
         } else {
             isFirstPosition = false
